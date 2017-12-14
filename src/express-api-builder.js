@@ -13,12 +13,24 @@ module.exports = function ExpressApiBuilder(options) {
         postDeploySteps = {};
         self = this;
 
+    this.environemnt = undefined;
+
     app.use(bodyParser.json({
         type: 'application/json'
     }));
     app.use(bodyParser.urlencoded({
         extended: true
     }));
+    app.use((req, res, next) => {
+        console.log('***** ENV middleware %s', req.path);
+        if(self.environemnt) {
+            let route = req.path.replace('/', '');
+            req.env = this.environemnt[route].variables;
+        } else {
+            req.env = {};
+        }
+        next();
+    });
     app.use('/', router);
 
     self.addPostDeployStep = function (name, stepFunction) {
@@ -52,6 +64,10 @@ module.exports = function ExpressApiBuilder(options) {
         }
         let promises = steps.reduce(executeStepMapper, []);
         return Promise.all(promises).then(() => stepResults);
+    };
+
+    self.defineEnvironment = function(environemnt) {
+        self.environemnt = environemnt;
     };
 
     setUpHandler = function (method) {
