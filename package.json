@@ -40,5 +40,10 @@
     "eslint-config-defaults": "^9.0.0",
     "jasmine": "^2.5.2",
     "jasmine-spec-reporter": "^2.7.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2"
   }
 }
