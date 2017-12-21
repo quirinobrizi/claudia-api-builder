@@ -22,7 +22,6 @@ module.exports = function ExpressApiBuilder(options) {
         extended: true
     }));
     app.use((req, res, next) => {
-        console.log('***** ENV middleware %s', req.path);
         if(self.environemnt) {
             let route = req.path.replace('/', '');
             req.env = this.environemnt[route].variables;
@@ -30,6 +29,9 @@ module.exports = function ExpressApiBuilder(options) {
             req.env = {};
         }
         next();
+    });
+    app.use((err, req, res, next) => {
+      res.status(err.status || 500).send(err);
     });
     app.use('/', router);
 
@@ -77,29 +79,33 @@ module.exports = function ExpressApiBuilder(options) {
             if (!/^\//.test(canonicalRoute)) {
                 canonicalRoute = '/' + route;
             }
+            var responseHandler = (req, res, next) => {
+                handler(req).then(r => res.send(r)).catch(e => next(e));
+            };
 
             switch (m) {
             case 'get':
-                router.get(canonicalRoute, handler);
+                router.get(canonicalRoute, responseHandler);
                 break;
             case 'post':
-                router.post(canonicalRoute, handler);
+                router.post(canonicalRoute, responseHandler);
                 break;
             case 'put':
-                router.put(canonicalRoute, handler);
+                router.put(canonicalRoute, responseHandler);
                 break;
             case 'delete':
-                router.delete(canonicalRoute, handler);
+                router.delete(canonicalRoute, responseHandler);
                 break;
             case 'head':
-                router.head(canonicalRoute, handler);
+                router.head(canonicalRoute, responseHandler);
                 break;
             case 'patch':
-                router.patch(canonicalRoute, handler);
+                router.patch(canonicalRoute, responseHandler);
                 break;
             }
         };
     };
     ['ANY'].concat(supportedMethods).forEach(setUpHandler);
-    app.listen(3000, () => console.log('Example app listening on port 3000!'))
+    let port = options.port || 3000;
+    app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 }
