@@ -107,5 +107,5 @@ module.exports = function ExpressApiBuilder(options) {
     };
     ['ANY'].concat(supportedMethods).forEach(setUpHandler);
     let port = options.port || 3000;
-    app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+    app.listen(port, () => console.log(`exa APIs listening on port ${port}!`));
 }

@@ -13,7 +13,6 @@ module.exports = class ApiBuilder {
 		if(options.aws) {
 			return new AwsLambdaApiBuilder(options);
 		} else if(options.express) {
-			console.log("express");
 			return new ExpressApiBuilder(options);
 		}
 	}
