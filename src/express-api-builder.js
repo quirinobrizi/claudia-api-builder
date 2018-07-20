@@ -1,5 +1,6 @@
 'use.strict'
 
+const uuid = require('uuid/v4');
 const express = require('express');
 const bodyParser = require('body-parser');
 const httpContext = require('express-http-context');
@@ -9,8 +10,8 @@ module.exports = function ExpressApiBuilder(options) {
     let supportedMethods = ['GET', 'POST', 'PUT', 'DELETE', 'HEAD', 'PATCH'],
         app = express(),
         router = express.Router(),
-        postDeploySteps = {};
-    self = this;
+        postDeploySteps = {},
+        self = this;
 
     this.environemnt = undefined;
 
@@ -80,6 +81,7 @@ module.exports = function ExpressApiBuilder(options) {
                 canonicalRoute = '/' + route;
             }
             var responseHandler = (req, res, next) => {
+                httpContext.set('traceId', uuid());
                 handler(req).then(r => res.send(r)).catch(e => next(e));
             };
 
