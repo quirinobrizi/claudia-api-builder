@@ -15,7 +15,6 @@ module.exports = function ExpressApiBuilder(options) {
 
     this.environemnt = undefined;
 
-    app.use(httpContext.middleware);
     app.use(bodyParser.json({
         type: 'application/json'
     }));
@@ -35,6 +34,7 @@ module.exports = function ExpressApiBuilder(options) {
         res.status(err.status || 500).send(err);
     });
     app.use('/', router);
+    router.use(httpContext.middleware);
 
     self.addPostDeployStep = function (name, stepFunction) {
         if (typeof name !== 'string') {
