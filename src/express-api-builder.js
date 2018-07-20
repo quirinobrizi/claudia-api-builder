@@ -1,9 +1,8 @@
 'use.strict'
 
-const util = require('util');
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const httpContext = require('express-http-context');
 
 module.exports = function ExpressApiBuilder(options) {
 
@@ -11,10 +10,11 @@ module.exports = function ExpressApiBuilder(options) {
         app = express(),
         router = express.Router(),
         postDeploySteps = {};
-        self = this;
+    self = this;
 
     this.environemnt = undefined;
 
+    app.use(httpContext.middleware);
     app.use(bodyParser.json({
         type: 'application/json'
     }));
@@ -22,7 +22,7 @@ module.exports = function ExpressApiBuilder(options) {
         extended: true
     }));
     app.use((req, res, next) => {
-        if(self.environemnt) {
+        if (self.environemnt) {
             let route = req.path.replace('/', '');
             req.env = this.environemnt[route].variables;
         } else {
@@ -31,7 +31,7 @@ module.exports = function ExpressApiBuilder(options) {
         next();
     });
     app.use((err, req, res, next) => {
-      res.status(err.status || 500).send(err);
+        res.status(err.status || 500).send(err);
     });
     app.use('/', router);
 
@@ -68,7 +68,7 @@ module.exports = function ExpressApiBuilder(options) {
         return Promise.all(promises).then(() => stepResults);
     };
 
-    self.defineEnvironment = function(environemnt) {
+    self.defineEnvironment = function (environemnt) {
         self.environemnt = environemnt;
     };
 
@@ -84,24 +84,24 @@ module.exports = function ExpressApiBuilder(options) {
             };
 
             switch (m) {
-            case 'get':
-                router.get(canonicalRoute, responseHandler);
-                break;
-            case 'post':
-                router.post(canonicalRoute, responseHandler);
-                break;
-            case 'put':
-                router.put(canonicalRoute, responseHandler);
-                break;
-            case 'delete':
-                router.delete(canonicalRoute, responseHandler);
-                break;
-            case 'head':
-                router.head(canonicalRoute, responseHandler);
-                break;
-            case 'patch':
-                router.patch(canonicalRoute, responseHandler);
-                break;
+                case 'get':
+                    router.get(canonicalRoute, responseHandler);
+                    break;
+                case 'post':
+                    router.post(canonicalRoute, responseHandler);
+                    break;
+                case 'put':
+                    router.put(canonicalRoute, responseHandler);
+                    break;
+                case 'delete':
+                    router.delete(canonicalRoute, responseHandler);
+                    break;
+                case 'head':
+                    router.head(canonicalRoute, responseHandler);
+                    break;
+                case 'patch':
+                    router.patch(canonicalRoute, responseHandler);
+                    break;
             }
         };
     };
