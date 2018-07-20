@@ -1,6 +1,6 @@
 {
   "name": "exa-api-builder",
-  "version": "2.6.3",
+  "version": "2.6.4",
   "description": "Simplify AWS ApiGateway handling",
   "license": "MIT",
   "repository": {
