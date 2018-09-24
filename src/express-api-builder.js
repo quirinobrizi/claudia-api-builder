@@ -35,7 +35,7 @@ module.exports = function ExpressApiBuilder(options) {
     res.status(err.status || 500).send(err);
   });
   if (options.cors.enabled) {
-    app.use(cors(options.cors.config));
+    app.use(cors(options.cors.config || {}));
   }
   app.use('/', router);
   router.use(httpContext.middleware);
